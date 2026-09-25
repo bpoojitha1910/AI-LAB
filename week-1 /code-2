@@ -1,0 +1,35 @@
+# Simple Reflex Agent - Vacuum Cleaner
+
+rooms = {
+    "A": input("Is Room A dirty? (yes/no): ").lower(),
+    "B": input("Is Room B dirty? (yes/no): ").lower()
+}
+
+current_room = input("Which room is the vacuum in? (A/B): ").upper()
+
+print("\nInitial state:", rooms)
+print("Vacuum starts in Room", current_room)
+
+# Check both rooms
+for _ in range(2):
+
+    print("\nVacuum is in Room", current_room)
+
+    # Reflex agent rule
+    if rooms[current_room] == "yes":
+        print("Room is dirty -> CLEAN")
+        rooms[current_room] = "no"
+        print("Room cleaned.")
+
+    else:
+        print("Room is clean -> MOVE")
+
+        if current_room == "A":
+            current_room = "B"
+        else:
+            current_room = "A"
+
+        print("Vacuum moved to Room", current_room)
+
+print("\nFinal state:", rooms)
+print("poojitha-1WA24CS079")
