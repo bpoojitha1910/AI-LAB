@@ -68,7 +68,7 @@ def play_game():
         print_board() # Print board after each move
 
         if check_winner(current_player_symbol) and not game_winner:
-            print(f"🎉 Player {current_player_symbol} wins!")
+            print(f"Player {current_player_symbol} wins!")
             game_winner = current_player_symbol
 
         if is_board_full():
