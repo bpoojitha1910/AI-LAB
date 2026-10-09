@@ -1,0 +1,52 @@
+def dls(s, goal, depth, path, seen):
+    if s == goal:
+        return path
+    if depth == 0:
+        return None
+
+    z = s.index(0)
+    r, c = z // 3, z % 3
+
+    for dr, dc in [(1,0), (-1,0), (0,1), (0,-1)]:
+        nr, nc = r + dr, c + dc
+
+        if 0 <= nr < 3 and 0 <= nc < 3:
+            nz = nr * 3 + nc
+            b = list(s)
+            b[z], b[nz] = b[nz], b[z]
+            ns = tuple(b)
+
+            if ns not in seen:
+                ans = dls(ns, goal, depth-1,
+                          path + [ns], seen | {ns})
+                if ans is not None:
+                    return ans
+    return None
+
+
+def ids(start, goal, limit=20):
+    for d in range(limit + 1):
+        print("Searching at depth:", d)
+        ans = dls(start, goal, d, [start], {start})
+
+        if ans is not None:
+            print("\nSolution found!")
+            for i, s in enumerate(ans):
+                print("Step", i)
+                print(s[:3])
+                print(s[3:6])
+                print(s[6:])
+                print()
+
+            print("Total moves:", len(ans) - 1)
+            print("Depth limit reached:", d)
+            return
+
+    print("No solution found within depth limit")
+
+
+start = (1,2,3,0,4,6,7,5,8)
+goal  = (1,2,3,4,5,6,7,8,0)
+
+ids(start, goal)
+print("poojitha-1WA24CS079")
