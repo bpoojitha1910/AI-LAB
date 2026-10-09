@@ -1,33 +1,38 @@
-
-def dfs(start, goal):
-    stack = [(start, [start])]
-    visited = set()
+def dfs(start, goal, max_depth=15):
+    stack = [(start, [start], 0)]
+    visited = {start: 0}  # Track state and the minimum depth it was reached at
 
     while stack:
-        state, path = stack.pop()
+        state, path, depth = stack.pop()
 
         if state == goal:
             for s in path:
                 print(s[:3], s[3:6], s[6:])
             print("Number of moves:", len(path) - 1)
+            print("Depth reached:", depth)
             return
 
-        if state in visited:
+        if depth >= max_depth:
             continue
-        visited.add(state)
 
         z = state.index(0)
         r, c = divmod(z, 3)
 
-        for d in [3, -3, 1, -1]:
+        for d in [-3, 3, -1, 1]:
             nz = z + d
             if 0 <= nz < 9 and abs(nz // 3 - r) + abs(nz % 3 - c) == 1:
                 t = list(state)
                 t[z], t[nz] = t[nz], t[z]
                 t = tuple(t)
-                if t not in visited:
-                    stack.append((t, path + [t]))
 
-start = (1, 2, 3, 0, 4, 6, 7, 5, 8)
+                if t not in visited or depth + 1 < visited[t]:
+                    visited[t] = depth + 1
+                    stack.append((t, path + [t], depth + 1))
+
+    print("No solution found within depth limit")
+
+start = (1, 0, 3, 4, 2, 5, 7, 8, 6)
 goal = (1, 2, 3, 4, 5, 6, 7, 8, 0)
-dfs(start, goal)
+
+dfs(start, goal, max_depth=15)
+print("poojitha-1WA24CS079")
