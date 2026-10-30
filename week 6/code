@@ -1,0 +1,88 @@
+def pl_true(sentence, model):
+    P = model['P']
+    Q = model['Q']
+    R = model['R']
+
+    if sentence == "Q->P":
+        return (not Q) or P
+
+    elif sentence == "P->~Q":
+        return (not P) or (not Q)
+
+    elif sentence == "Q|R":
+        return Q or R
+
+    elif sentence == "R":
+        return R
+
+    elif sentence == "R->P":
+        return (not R) or P
+
+    elif sentence == "Q->R":
+        return (not Q) or R
+
+
+def tt_check_all(kb, query, symbols, model):
+    if len(symbols) == 0:
+        kb_true = all(pl_true(s, model) for s in kb)
+
+        if kb_true:
+            return pl_true(query, model)
+
+        return True
+
+    symbol = symbols[0]
+    remaining = symbols[1:]
+
+    model_true = model.copy()
+    model_true[symbol] = True
+
+    model_false = model.copy()
+    model_false[symbol] = False
+
+    return (tt_check_all(kb, query, remaining, model_true)
+            and
+            tt_check_all(kb, query, remaining, model_false))
+
+
+def tt_entails(kb, query):
+    symbols = ['P', 'Q', 'R']
+    return tt_check_all(kb, query, symbols, {})
+
+
+# Knowledge Base
+kb = ["Q->P", "P->~Q", "Q|R"]
+
+# Display Truth Table
+print("P Q R | Q->P | P->~Q | Q|R | KB")
+print("-----------------------------------")
+
+for p in [True, False]:
+    for q in [True, False]:
+        for r in [True, False]:
+
+            model = {'P': p, 'Q': q, 'R': r}
+
+            a = pl_true("Q->P", model)
+            b = pl_true("P->~Q", model)
+            c = pl_true("Q|R", model)
+
+            kb_true = a and b and c
+
+            def tf(value):
+                return 'T' if value else 'F'
+
+            print(tf(p), tf(q), tf(r), " | ",
+                  tf(a), "   | ",
+                  tf(b), "    | ",
+                  tf(c), "  | ",
+                  tf(kb_true))
+
+# Check entailment
+print("\nENTAILMENT RESULTS")
+
+queries = ["R", "R->P", "Q->R"]
+
+for query in queries:
+    result = tt_entails(kb, query)
+    print("KB entails", query, ":", result)
