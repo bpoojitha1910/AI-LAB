@@ -1,0 +1,38 @@
+import random
+import math
+
+def cost(state):
+    c = 0
+    for i in range(8):
+        for j in range(i + 1, 8):
+            if state[i] == state[j] or abs(state[i] - state[j]) == abs(i - j):
+                c += 1
+    return c
+
+state = [random.randint(0, 7) for i in range(8)]
+T = 100
+cooling = 0.99
+
+print("Initial State:", state)
+print("Initial Cost:", cost(state))
+
+while T > 0.01:
+    if cost(state) == 0:
+        break
+
+    new_state = state[:]
+    col = random.randint(0, 7)
+    new_state[col] = random.randint(0, 7)
+
+    delta = cost(new_state) - cost(state)
+
+    if delta < 0 or random.random() < math.exp(-delta / T):
+        state = new_state
+
+    T *= cooling
+
+print("\nFinal State:", state)
+print("Final Cost:", cost(state))
+
+for i in range(8):
+    print(" ".join("Q" if state[j] == i else "." for j in range(8)))
